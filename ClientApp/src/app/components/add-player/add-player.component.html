@@ -1,0 +1,105 @@
+<div class="container">
+    <div [hidden]="submitted">
+        <h1>Добавление игрока</h1>
+        <form (ngSubmit)="onSubmit()" #addPlayerForm="ngForm">
+            <div class="row">
+                <mat-form-field class="col-md-6 col-sm-12">
+                    <mat-label>Имя</mat-label>
+                    <input matInput id="firstName" required [(ngModel)]="player.firstName" name="firstName"
+                        #firstName="ngModel">
+                </mat-form-field>
+            </div>
+
+            <div class="row">
+                <mat-form-field class="col-md-6 col-sm-12">
+                    <mat-label>Фамилия</mat-label>
+                    <input matInput id="lastName" required [(ngModel)]="player.lastName" name="lastName"
+                        #lastName="ngModel">
+                </mat-form-field>
+            </div>
+
+            <div class="row">
+                <mat-form-field class="col-md-3 col-sm-6">
+                    <input  matInput name="dateOfBirth" [min]="minDate" [max]="maxDate" [matDatepicker]="picker" placeholder="Дата рождения"
+                        [(ngModel)]="player.dateOfBirth" required>
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker></mat-datepicker>
+                </mat-form-field>
+                <mat-form-field class="col-md-3 col-sm-6">
+                    <mat-label>Пол</mat-label>
+                    <mat-select name="gender" [(ngModel)]="player.gender" required>
+                        <mat-option *ngFor="let gender of genders" [value]="gender">
+                            {{gender}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+
+            <div class="row" >
+                <mat-form-field class="col-md-3 col-sm-6">
+                    <mat-label>Страна</mat-label>
+                    <mat-select name="country" [(ngModel)]="player.country" required>
+                        <mat-option *ngFor="let country of countries" [value]="country">
+                            {{country}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <mat-form-field class="col-md-3 col-sm-6">
+                    <mat-label>Команда</mat-label>
+                    <mat-select name="team" [(ngModel)]="player.team" required [disabled]="addNewTeam">
+                        <mat-option *ngFor="let team of teams" [value]="team">
+                            {{team}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <mat-checkbox name="addNewTeam" id="addNewTeam" [(ngModel)]="addNewTeam">Команды нет в списке</mat-checkbox>
+            </div>
+            
+            <div class="row" [hidden]="!addNewTeam">
+                <mat-form-field class="col-md-6 col-sm-12">
+                    <mat-label>Добавление новой команды</mat-label>
+                    <input matInput id="teamName" value="" [formControl]="teamsControl" [(ngModel)]="player.team" name="teamName" [matAutocomplete]="auto"
+                        required>
+                    <mat-autocomplete #auto="matAutocomplete">
+                        <mat-option *ngFor="let team of filteredTeams | async" [value]="team">{{team}}</mat-option>
+                    </mat-autocomplete>
+                </mat-form-field>
+            </div>
+
+            <div class="row">
+                <button mat-button type="submit" [disabled]="!addPlayerForm.form.valid || teamsControl.invalid">Добавить</button>
+                <button type="button" class="btn btn-default" (click)="newPlayer(); addPlayerForm.reset()">Сбросить</button>
+            </div>
+        </form>
+    </div>
+
+    <div *ngIf="submitted">
+        <h2>Отправлены следующие данные:</h2>
+        <div class="row">
+            <div class="col-xs-3">Имя: </div>
+            <div class="col-xs-9">{{ player.firstName }}</div>
+        </div>
+        <div class="row">
+            <div class="col-xs-3">Фамилия: </div>
+            <div class="col-xs-9">{{ player.lastName }}</div>
+        </div>
+        <div class="row">
+            <div class="col-xs-3">Команда: </div>
+            <div class="col-xs-9">{{ player.team }}</div>
+        </div>
+        <div class="row">
+            <div class="col-xs-3">Дата рождения: </div>
+            <div class="col-xs-9">{{ player.dateOfBirth }}</div>
+        </div>
+        <div class="row">
+            <div class="col-xs-3">Страна: </div>
+            <div class="col-xs-9">{{ player.country }}</div>
+        </div>
+        <div class="row">
+            <div class="col-xs-3">Пол: </div>
+            <div class="col-xs-9">{{ player.gender }}</div>
+        </div>
+
+        <button class="btn btn-primary" (click)="submitted=false">Edit</button>
+    </div>
+</div>
