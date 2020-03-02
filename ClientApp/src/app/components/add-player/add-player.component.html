@@ -27,9 +27,9 @@
                 </mat-form-field>
                 <mat-form-field class="col-md-3 col-sm-6">
                     <mat-label>Пол</mat-label>
-                    <mat-select name="gender" [(ngModel)]="player.gender" required>
-                        <mat-option *ngFor="let gender of genders" [value]="gender">
-                            {{gender}}
+                    <mat-select name="sex" [(ngModel)]="player.sex" required>
+                        <mat-option *ngFor="let sex of sexes" [value]="sex">
+                            {{sex}}
                         </mat-option>
                     </mat-select>
                 </mat-form-field>
@@ -55,6 +55,7 @@
                 <mat-checkbox name="addNewTeam" id="addNewTeam" [(ngModel)]="addNewTeam">Команды нет в списке</mat-checkbox>
             </div>
             
+            <!-- [hidden] используется для предотвращения ошибки ExpressionChangedAfterItHasBeenCheckedError -->
             <div class="row" [hidden]="!addNewTeam">
                 <mat-form-field class="col-md-6 col-sm-12">
                     <mat-label>Добавление новой команды</mat-label>
@@ -97,7 +98,7 @@
         </div>
         <div class="row">
             <div class="col-xs-3">Пол: </div>
-            <div class="col-xs-9">{{ player.gender }}</div>
+            <div class="col-xs-9">{{ player.sex }}</div>
         </div>
 
         <button class="btn btn-primary" (click)="submitted=false">Edit</button>

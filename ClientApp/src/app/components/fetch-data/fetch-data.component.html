@@ -1,0 +1,141 @@
+<h1 id="playersTable"></h1>
+
+<p *ngIf="!players"><em>Загрузка...</em></p>
+
+<div class="container mt-10" *ngIf="player" style="margin-bottom: 10px;">
+  <div [hidden]="submitted">
+      <h1>Редактирование игрока</h1>
+      <form (ngSubmit)="onSubmit()" #editPlayerForm="ngForm" id="editPlayerForm" name="editPlayerForm">
+          <div class="row">
+              <mat-form-field class="col-md-6 col-sm-12">
+                  <mat-label>Имя</mat-label>
+                  <input matInput id="firstName" required [(ngModel)]="player.firstName" name="firstName"
+                      #firstName="ngModel">
+              </mat-form-field>
+          </div>
+
+          <div class="row">
+              <mat-form-field class="col-md-6 col-sm-12">
+                  <mat-label>Фамилия</mat-label>
+                  <input matInput id="lastName" required [(ngModel)]="player.lastName" name="lastName"
+                      #lastName="ngModel">
+              </mat-form-field>
+          </div>
+
+          <div class="row">
+              <mat-form-field class="col-md-3 col-sm-6">
+                  <input  matInput name="dateOfBirth" [min]="minDate" [max]="maxDate" [matDatepicker]="picker" placeholder="Дата рождения"
+                      [(ngModel)]="player.dateOfBirth" required>
+                  <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                  <mat-datepicker #picker></mat-datepicker>
+              </mat-form-field>
+              <mat-form-field class="col-md-3 col-sm-6">
+                  <mat-label>Пол</mat-label>
+                  <mat-select name="sex" [(ngModel)]="player.sex" required>
+                      <mat-option *ngFor="let sex of sexes" [value]="sex">
+                          {{sex}}
+                      </mat-option>
+                  </mat-select>
+              </mat-form-field>
+          </div>
+
+          <div class="row" >
+              <mat-form-field class="col-md-3 col-sm-6">
+                  <mat-label>Страна</mat-label>
+                  <mat-select name="country" [(ngModel)]="player.country" required>
+                      <mat-option *ngFor="let country of countries" [value]="country">
+                          {{country}}
+                      </mat-option>
+                  </mat-select>
+              </mat-form-field>
+              <mat-form-field class="col-md-3 col-sm-6">
+                  <mat-label>Команда</mat-label>
+                  <mat-select name="team" [(ngModel)]="player.team" required [disabled]="addNewTeam">
+                      <mat-option *ngFor="let team of teams" [value]="team">
+                          {{team}}
+                      </mat-option>
+                  </mat-select>
+              </mat-form-field>
+              <mat-checkbox name="addNewTeam" id="addNewTeam" [(ngModel)]="addNewTeam">Команды нет в списке</mat-checkbox>
+          </div>
+          
+          <!-- [hidden] используется для предотвращения ошибки ExpressionChangedAfterItHasBeenCheckedError -->
+          <div class="row" [hidden]="!addNewTeam">
+              <mat-form-field class="col-md-6 col-sm-12">
+                  <mat-label>Добавление новой команды</mat-label>
+                  <input matInput id="teamName" value="" [formControl]="teamsControl" [(ngModel)]="player.team" name="teamName" [matAutocomplete]="auto"
+                      required>
+                  <mat-autocomplete #auto="matAutocomplete">
+                      <mat-option *ngFor="let team of filteredTeams | async" [value]="team">{{team}}</mat-option>
+                  </mat-autocomplete>
+              </mat-form-field>
+          </div>
+
+          <div class="row">
+              <button mat-button type="submit" [disabled]="!editPlayerForm.form.valid || teamsControl.invalid">Отправить</button>
+              <button type="button" class="btn btn-default" (click)="resetPlayer(); editPlayerForm.reset()">Сбросить</button>
+          </div>
+      </form>
+  </div>
+
+  <div *ngIf="submitted">
+      <h2>Отправлены следующие данные:</h2>
+      <div class="row">
+          <div class="col-xs-3">Имя: </div>
+          <div class="col-xs-9">{{ player.firstName }}</div>
+      </div>
+      <div class="row">
+          <div class="col-xs-3">Фамилия: </div>
+          <div class="col-xs-9">{{ player.lastName }}</div>
+      </div>
+      <div class="row">
+          <div class="col-xs-3">Команда: </div>
+          <div class="col-xs-9">{{ player.team }}</div>
+      </div>
+      <div class="row">
+          <div class="col-xs-3">Дата рождения: </div>
+          <div class="col-xs-9">{{ player.dateOfBirth }}</div>
+      </div>
+      <div class="row">
+          <div class="col-xs-3">Страна: </div>
+          <div class="col-xs-9">{{ player.country }}</div>
+      </div>
+      <div class="row">
+          <div class="col-xs-3">Пол: </div>
+          <div class="col-xs-9">{{ player.sex }}</div>
+      </div>
+
+      <button class="btn btn-primary" (click)="resetPlayer()">Ок</button>
+  </div>
+</div>
+
+<table class='table table-striped' aria-labelledby="playersTable" *ngIf="players">
+  <thead>
+    <tr>
+      <th>Id</th>
+      <th>Имя</th>
+      <th>Фамилия</th>
+      <th>Пол</th>
+      <th>Дата рождения</th>
+      <th>Команда</th>
+      <th>Страна</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let player of players" style="cursor: pointer" >
+      <td>{{ player.id }}</td>
+      <td>{{ player.firstName }}</td>
+      <td>{{ player.lastName }}</td>
+      <td>{{ player.sex }}</td>
+      <td>{{ player.dateOfBirth }}</td>
+      <td>{{ player.team }}</td>
+      <td>{{ player.country }}</td>
+      <td (click)="selectPlayerToEdit(player)">
+        <img src="../../assets/pencil.png" class="img32px" alt="Редактировать">
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+
